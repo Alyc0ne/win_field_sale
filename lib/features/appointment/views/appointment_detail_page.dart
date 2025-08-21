@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:win_field_sale/core/base_provider.dart';
 import 'package:win_field_sale/features/appointment/models/appointment_detail.dart';
-// import 'package:win_field_sale/features/appointment/models/client.dart';
-// import 'package:win_field_sale/features/appointment/views/appointment_edit_page.dart';
+import 'package:win_field_sale/features/appointment/models/client.dart';
+import 'package:win_field_sale/features/appointment/views/appointment_edit_page.dart';
 import 'package:win_field_sale/features/appointment/widgets/app_map.dart';
 import 'package:win_field_sale/features/appointment/widgets/app_text.dart';
 import 'package:win_field_sale/features/appointment/widgets/appointment_status.dart';
@@ -51,8 +51,7 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
         title: AppText(label: 'Appointment details', fontSize: 17, fontWeight: FontWeight.w600),
         actions: [
           TextButton(
-            // onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => AppointmentEditPage(appointmentID: widget.appointmentID))),
-            onPressed: () => {},
+            onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => AppointmentEditPage(appointmentID: widget.appointmentID))),
             child: AppText(label: 'Edit', textColor: colorPrimary),
           ),
         ],

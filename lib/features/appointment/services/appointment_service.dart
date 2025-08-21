@@ -1,7 +1,7 @@
 import 'package:win_field_sale/core/http/api_client.dart';
 import 'package:win_field_sale/features/appointment/models/appointment.dart';
 import 'package:win_field_sale/features/appointment/models/appointment_detail.dart';
-// import 'package:win_field_sale/features/appointment/models/product.dart';
+import 'package:win_field_sale/features/appointment/models/product.dart';
 
 class AppointmentService {
   final apiClient = ApiClient('https://sfe-api.appnormalthink.com');
@@ -31,17 +31,17 @@ class AppointmentService {
     return appointment;
   }
 
-  // Future<List<Product>> fetchProducts() async {
-  //   final products = await apiClient.get(
-  //     path: "/product/?SearchName=Test&IsActive=true",
-  //     decode: (json) {
-  //       final map = json as Map<String, dynamic>;
-  //       final list = map['products'] as List? ?? const [];
-  //       return Product.listFromJson(list);
-  //     },
-  //     headers: {"Authorization": "Bearer $token"},
-  //   );
+  Future<List<Product>> fetchProducts() async {
+    final products = await apiClient.get(
+      path: "/product/?SearchName=Test&IsActive=true",
+      decode: (json) {
+        final map = json as Map<String, dynamic>;
+        final list = map['products'] as List? ?? const [];
+        return Product.listFromJson(list);
+      },
+      headers: {"Authorization": "Bearer $token"},
+    );
 
-  //   return products;
-  // }
+    return products;
+  }
 }
