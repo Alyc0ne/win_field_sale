@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AppMap extends StatefulWidget {
-  final double lat;
-  final double lng;
+  final double? lat;
+  final double? lng;
 
   const AppMap({required this.lat, required this.lng, super.key});
 
@@ -22,9 +22,14 @@ class _AppMapState extends State<AppMap> {
 
   @override
   Widget build(BuildContext context) {
-    final pos = CameraPosition(target: LatLng(widget.lat, widget.lng), zoom: 16);
+    final latitude = widget.lat;
+    final longitude = widget.lng;
 
-    final markers = <Marker>{Marker(markerId: const MarkerId('target'), position: LatLng(widget.lat, widget.lng), infoWindow: const InfoWindow(title: 'ตำแหน่งของคุณ'))};
+    if (latitude == null || longitude == null) return const SizedBox.shrink();
+
+    final pos = CameraPosition(target: LatLng(latitude, longitude), zoom: 16);
+
+    final markers = <Marker>{Marker(markerId: const MarkerId('target'), position: LatLng(latitude, longitude), infoWindow: const InfoWindow(title: 'ตำแหน่งของคุณ'))};
 
     return Container(
       width: 352,

@@ -112,7 +112,7 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
               ),
             ],
           ),
-          AppMap(lat: addresses.isNotEmpty ? addresses.first.latitude ?? 0 : 0, lng: addresses.isNotEmpty ? addresses.first.longitude ?? 0 : 0),
+          AppMap(lat: addresses.isNotEmpty ? addresses.first.latitude : null, lng: addresses.isNotEmpty ? addresses.first.longitude : null),
           buildContentCard(title: 'purpose', descWidget: AppText(label: appointmentDetail.purposeTypeName, textColor: colorPrimary), fullWidth: true),
           Row(
             spacing: 16,
