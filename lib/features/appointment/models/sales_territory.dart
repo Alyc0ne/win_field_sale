@@ -11,4 +11,8 @@ class SalesTerritory {
   Map<String, dynamic> toJson() {
     return {'SalesTerritoryID': salesTerritoryID, 'SalesTerritoryName': salesTerritoryName};
   }
+
+  SalesTerritory copyWith({String? salesTerritoryID, String? salesTerritoryName}) {
+    return SalesTerritory(salesTerritoryID: salesTerritoryID ?? this.salesTerritoryID, salesTerritoryName: salesTerritoryName ?? this.salesTerritoryName);
+  }
 }

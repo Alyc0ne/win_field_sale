@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:win_field_sale/core/base_provider.dart';
 import 'package:win_field_sale/features/appointment/models/appointment.dart';
-import 'package:win_field_sale/features/appointment/views/appointment_detail_page.dart';
 
 class AppointmentListPage extends ConsumerStatefulWidget {
   const AppointmentListPage({super.key});
@@ -14,23 +13,26 @@ class AppointmentListPage extends ConsumerStatefulWidget {
 class _AppointmentListPageState extends ConsumerState<AppointmentListPage> {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Appointment>>(
-      future: ref.read(appointmentProvider).fetchAppointments(),
-      builder: (_, snapshot) {
-        final appointments = snapshot.data ?? [];
-        if (appointments.isEmpty) return const Center(child: Text("No data"));
+    return Scaffold(
+      appBar: AppBar(title: const Text("Appointment List")),
+      body: FutureBuilder<List<Appointment>>(
+        future: ref.read(appointmentProvider).fetchAppointments(),
+        builder: (_, snapshot) {
+          final appointments = snapshot.data ?? [];
+          if (appointments.isEmpty) return const Center(child: Text("No data"));
 
-        return ListView.separated(
-          itemCount: appointments.length,
-          itemBuilder: (_, index) {
-            return GestureDetector(
-              onTap: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => AppointmentDetailPage(appointmentID: appointments[index].appointmentId))),
-              child: Container(padding: const EdgeInsets.all(8.0), child: Column(children: [Text(appointments[index].appointmentTitle)])),
-            );
-          },
-          separatorBuilder: (context, index) => const Divider(),
-        );
-      },
+          return ListView.separated(
+            itemCount: appointments.length,
+            itemBuilder: (_, index) {
+              return GestureDetector(
+                onTap: () => Navigator.of(context).pushNamed('/appointmentDetail', arguments: appointments[index].appointmentId),
+                child: Container(padding: const EdgeInsets.all(8.0), child: Column(children: [Text(appointments[index].appointmentTitle)])),
+              );
+            },
+            separatorBuilder: (context, index) => const Divider(),
+          );
+        },
+      ),
     );
   }
 }

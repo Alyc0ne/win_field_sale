@@ -73,4 +73,36 @@ class Client {
       'SalesTerritory': salesTerritory?.toJson(),
     };
   }
+
+  Client copyWith({
+    String? clientID,
+    String? clientLevelID,
+    String? clientLevelName,
+    String? clientStatusID,
+    String? clientStatusName,
+    String? firstName,
+    String? lastName,
+    String? noted,
+    String? phone,
+    String? email,
+    String? availableTimeStart,
+    String? availableTimeEnd,
+    SalesTerritory? salesTerritory,
+  }) {
+    return Client(
+      clientID: clientID ?? this.clientID,
+      clientLevelID: clientLevelID ?? this.clientLevelID,
+      clientLevelName: clientLevelName ?? this.clientLevelName,
+      clientStatusID: clientStatusID ?? this.clientStatusID,
+      clientStatusName: clientStatusName ?? this.clientStatusName,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      noted: noted ?? this.noted,
+      phone: phone ?? this.phone,
+      email: email ?? this.email,
+      availableTimeStart: availableTimeStart ?? this.availableTimeStart,
+      availableTimeEnd: availableTimeEnd ?? this.availableTimeEnd,
+      salesTerritory: salesTerritory ?? this.salesTerritory,
+    );
+  }
 }

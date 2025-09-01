@@ -20,11 +20,18 @@ class ApiClient {
     if (res.body.isEmpty) throw Exception('Empty response body');
 
     final raw = jsonDecode(res.body);
+    if (raw is Map && raw['status']?.toString().toLowerCase() != 'success') {
+      throw Exception("API returned status != success: ${raw['status']}");
+    }
 
-    return decode(raw);
+    try {
+      return decode(raw);
+    } catch (e) {
+      throw Exception('Decode error for $T: $e');
+    }
   }
 
-  Future<T> post<T>({required String path, required Map<String, dynamic> body, Decoder<T>? decode}) async {
+  Future<T> post<T>({required String path, required Map<String, dynamic> body, required Decoder<T> decode}) async {
     final uri = Uri.parse('$_baseUrl$path');
 
     final res = await http.post(uri, headers: {'Content-Type': 'application/json'}, body: jsonEncode(body));
@@ -38,11 +45,62 @@ class ApiClient {
     }
 
     final raw = jsonDecode(res.body);
+    if (raw is Map && raw['status']?.toString().toLowerCase() != 'success') {
+      throw Exception("API returned status != success: ${raw['status']}");
+    }
 
     try {
-      return decode!(raw);
+      return decode(raw);
     } catch (e) {
       throw Exception('Decode error for $T: $e');
     }
+  }
+
+  Future<bool> put({required String path, required Map<String, dynamic> body, Map<String, String>? headers}) async {
+    final uri = Uri.parse('$_baseUrl$path');
+
+    print('data json: ${jsonEncode(body)}');
+
+    final res = await http.put(uri, headers: {'Content-Type': 'application/json', if (headers != null) ...headers}, body: jsonEncode(body));
+
+    if (res.statusCode != 200) {
+      throw Exception('HTTP ${res.statusCode}: ${res.body}');
+    }
+
+    if (res.body.isEmpty) {
+      throw Exception('Empty response body');
+    }
+
+    print('res: ${res.body}');
+
+    final raw = jsonDecode(res.body);
+    if (raw is Map && raw['status']?.toString().toLowerCase() != 'success') {
+      throw Exception("API returned status != success: ${raw['status']}");
+    }
+
+    return true;
+  }
+
+  Future<bool> delete({required String path, Map<String, String>? headers}) async {
+    final uri = Uri.parse('$_baseUrl$path');
+
+    final res = await http.delete(uri, headers: {'Content-Type': 'application/json', if (headers != null) ...headers});
+
+    if (res.statusCode != 200) {
+      throw Exception('HTTP ${res.statusCode}: ${res.body}');
+    }
+
+    if (res.body.isEmpty) {
+      throw Exception('Empty response body');
+    }
+
+    print('res: ${res.body}');
+
+    final raw = jsonDecode(res.body);
+    if (raw is Map && raw['status']?.toString().toLowerCase() != 'success') {
+      throw Exception("API returned status != success: ${raw['status']}");
+    }
+
+    return true;
   }
 }

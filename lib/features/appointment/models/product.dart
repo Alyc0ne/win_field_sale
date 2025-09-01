@@ -9,4 +9,6 @@ class Product {
   Map<String, dynamic> toJson() => {"ProductID": productId, "ProductName": productName};
 
   static List<Product> listFromJson(List<dynamic> jsonList) => jsonList.map((e) => Product.fromJson(e as Map<String, dynamic>)).toList();
+
+  static List<String> listFromJsonString(List<dynamic> jsonList) => jsonList.map((e) => e as String).toList();
 }

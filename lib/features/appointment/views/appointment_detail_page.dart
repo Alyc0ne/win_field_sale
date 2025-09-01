@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:win_field_sale/core/base_provider.dart';
+import 'package:win_field_sale/features/appointment/models/address.dart';
 import 'package:win_field_sale/features/appointment/models/appointment_detail.dart';
-import 'package:win_field_sale/features/appointment/models/client.dart';
-import 'package:win_field_sale/features/appointment/views/appointment_edit_page.dart';
+import 'package:win_field_sale/features/appointment/views/appointment_visit_page.dart';
 import 'package:win_field_sale/features/appointment/widgets/app_map.dart';
 import 'package:win_field_sale/features/appointment/widgets/app_text.dart';
 import 'package:win_field_sale/features/appointment/widgets/appointment_status.dart';
+import 'package:win_field_sale/features/appointment/widgets/appointment_type.dart';
 import 'package:win_field_sale/features/appointment/widgets/client_status.dart';
 import 'package:win_field_sale/features/appointment/widgets/level_status.dart';
-import 'package:win_field_sale/features/appointment/widgets/meeting_status.dart';
 
 class AppointmentDetailPage extends ConsumerStatefulWidget {
   final String appointmentID;
@@ -29,11 +29,19 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
     super.initState();
   }
 
+  callEditPage() async {
+    final result = await Navigator.of(context).pushNamed<bool>('/appointmentEdit', arguments: widget.appointmentID);
+    if (result == true && mounted) {
+      await ref.read(appointmentDetailProvider(widget.appointmentID).notifier).refresh();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Color(0xFFEEEEEE),
         leadingWidth: 80,
         leading: GestureDetector(
@@ -49,12 +57,7 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
           ),
         ),
         title: AppText(label: 'Appointment details', fontSize: 17, fontWeight: FontWeight.w600),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute<void>(builder: (_) => AppointmentEditPage(appointmentID: widget.appointmentID))),
-            child: AppText(label: 'Edit', textColor: colorPrimary),
-          ),
-        ],
+        actions: [TextButton(onPressed: () => callEditPage(), child: AppText(label: 'Edit', textColor: colorPrimary))],
       ),
       body: Consumer(
         builder: (_, ref, _) {
@@ -62,7 +65,9 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
 
           return state.when(
             loading: () => Center(child: CircularProgressIndicator(color: colorPrimary)),
-            error: (e, _) => Center(child: AppText(label: "Appointment Not Found: $e", textColor: Colors.red)),
+            error: (e, _) {
+              return Center(child: AppText(label: "Appointment Not Found", textColor: Colors.red));
+            },
             data: (detail) => buildContent(detail),
           );
         },
@@ -71,7 +76,7 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
   }
 
   Widget buildContent(AppointmentDetail appointmentDetail) {
-    final addresses = appointmentDetail.addresses;
+    final address = appointmentDetail.address;
     final client = appointmentDetail.client;
     final salesTerritory = client.salesTerritory;
     final products = appointmentDetail.products;
@@ -92,7 +97,7 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     spacing: 6,
                     children: [
-                      MeetingStatus(meetingStatusName: ''),
+                      AppointmentType(appointmentTypeName: appointmentDetail.appointmentTypeName),
                       AppointmentStatus(appointmentStatusName: appointmentDetail.appointmentStatusName),
                       ClientStatus(clientStatusName: client.clientStatusName),
                       LevelStatus(levelStatusName: client.clientLevelName),
@@ -106,13 +111,17 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
                 children: [
                   buildActionCard(icon: Icons.person, title: 'clients', onTap: () => print('client page')),
                   buildActionCard(icon: Icons.location_pin, title: 'map', onTap: () => print('map page')),
-                  buildActionCard(icon: Icons.menu_book, title: 'check in', onTap: () => print('check in page')),
+                  buildActionCard(
+                    icon: Icons.menu_book,
+                    title: 'check in',
+                    onTap: () => Navigator.push(context, MaterialPageRoute<void>(builder: (BuildContext context) => AppointmentVisitPage(appointmentID: appointmentDetail.appointmentId))),
+                  ),
                   buildActionCard(icon: Icons.history, title: 'history', onTap: () => print('history page')),
                 ],
               ),
             ],
           ),
-          AppMap(lat: addresses.isNotEmpty ? addresses.first.latitude : null, lng: addresses.isNotEmpty ? addresses.first.longitude : null),
+          AppMap(lat: address.latitude, lng: address.longitude),
           buildContentCard(title: 'purpose', descWidget: AppText(label: appointmentDetail.purposeTypeName, textColor: colorPrimary), fullWidth: true),
           Row(
             spacing: 16,
@@ -121,7 +130,7 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
               Expanded(child: buildContentCard(title: 'territory', descWidget: AppText(label: salesTerritory?.salesTerritoryName ?? ''))),
             ],
           ),
-          buildContentCard(title: 'address', descWidget: AppText(label: addresses.isNotEmpty ? addresses.first.address : ""), fullWidth: true),
+          buildContentCard(title: 'address', descWidget: AppText(label: address.fullAddress, maxLines: 2), fullWidth: true),
           buildContentCard(title: 'mobile', descWidget: AppText(label: client.phone), fullWidth: true),
           buildContentCard(title: 'email', descWidget: AppText(label: client.email), fullWidth: true),
           buildContentCard(title: 'company', descWidget: AppText(label: appointmentDetail.companyName), fullWidth: true),
@@ -139,7 +148,7 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
             ),
             fullWidth: true,
           ),
-          buildContentCard(title: 'note', descWidget: AppText(label: client.noted, maxLines: null), fullWidth: true),
+          buildContentCard(title: 'note', descWidget: AppText(label: appointmentDetail.noted, maxLines: null), fullWidth: true),
         ],
       ),
     );

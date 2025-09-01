@@ -14,7 +14,9 @@ class AppointmentDetailViewModel extends StateNotifier<AsyncValue<AppointmentDet
   AppointmentService get _appointmentService => ref.read(appointmentServiceProvider);
 
   Future<void> fetch() async {
-    state = await AsyncValue.guard(() => _appointmentService.fetchAppointmentById(id));
+    state = const AsyncLoading();
+    final res = await AsyncValue.guard(() => _appointmentService.fetchAppointmentById(id));
+    state = res;
   }
 
   Future<void> refresh() => fetch();
