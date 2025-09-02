@@ -31,10 +31,10 @@ class ApiClient {
     }
   }
 
-  Future<T> post<T>({required String path, required Map<String, dynamic> body, required Decoder<T> decode}) async {
+  Future<T> post<T>({required String path, required Map<String, dynamic> body, required Decoder<T> decode, Map<String, String>? headers}) async {
     final uri = Uri.parse('$_baseUrl$path');
 
-    final res = await http.post(uri, headers: {'Content-Type': 'application/json'}, body: jsonEncode(body));
+    final res = await http.post(uri, headers: {'Content-Type': 'application/json', if (headers != null) ...headers}, body: jsonEncode(body));
 
     if (res.statusCode != 200) {
       throw Exception('HTTP ${res.statusCode}: ${res.body}');

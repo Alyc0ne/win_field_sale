@@ -1,10 +1,13 @@
+import 'package:intl/intl.dart';
 import 'package:win_field_sale/features/appointment/models/address.dart';
 import 'package:win_field_sale/features/appointment/models/client.dart';
 import 'package:win_field_sale/features/appointment/models/product.dart';
+import 'package:win_field_sale/features/appointment/models/visit_activities.dart';
 
 class AppointmentDetail {
   final String userId;
   final String clientId;
+  final String clientName;
   final String noted;
   final String? assignedBy;
   final String appointmentTitle;
@@ -21,13 +24,17 @@ class AppointmentDetail {
   final String appointmentDateTimeTo;
   final String purposeOther;
   final Address address;
+  final String phone;
+  final String email;
   final List<Product> products;
+  final List<VisitActivity> visitActivities;
   final Client client;
   final String modifiedBy;
 
   AppointmentDetail({
     required this.userId,
     required this.clientId,
+    required this.clientName,
     required this.noted,
     this.assignedBy,
     required this.appointmentTitle,
@@ -44,7 +51,10 @@ class AppointmentDetail {
     required this.appointmentDateTimeTo,
     required this.purposeOther,
     required this.address,
+    required this.phone,
+    required this.email,
     required this.products,
+    required this.visitActivities,
     required this.client,
     required this.modifiedBy,
   });
@@ -52,6 +62,7 @@ class AppointmentDetail {
   factory AppointmentDetail.fromJson(Map<String, dynamic> json) => AppointmentDetail(
     userId: json["UserID"],
     clientId: json["ClientID"],
+    clientName: json["ClientName"] ?? '',
     noted: json["Noted"] ?? '',
     assignedBy: json["AssignedBy"],
     appointmentTitle: json["AppointmentTitle"],
@@ -68,7 +79,10 @@ class AppointmentDetail {
     appointmentDateTimeTo: json["AppointmentDateTimeTo"],
     purposeOther: json["PurposeOther"] ?? '',
     address: Address.fromJson((json["addresses"] as List).isNotEmpty ? json["addresses"][0] : null),
+    phone: json["Phone"] ?? '',
+    email: json["Email"] ?? '',
     products: (json["products"] as List).map((e) => Product.fromJson(e)).toList(),
+    visitActivities: (json["visit_activities"] as List? ?? []).map((e) => VisitActivity.fromJson(e)).toList(),
     client: Client.fromJson(json["Client"]),
     modifiedBy: json["ModifiedBy"],
   );
@@ -76,6 +90,7 @@ class AppointmentDetail {
   Map<String, dynamic> toJson() => {
     "UserID": userId,
     "ClientID": clientId,
+    "ClientName": clientName,
     "Noted": noted,
     "AssignedBy": assignedBy,
     "AppointmentTitle": appointmentTitle,
@@ -92,6 +107,8 @@ class AppointmentDetail {
     "AppointmentDateTimeTo": appointmentDateTimeTo,
     "PurposeOther": purposeOther,
     "address": address.toJson(),
+    "Phone": phone,
+    "Email": email,
     "products": products.map((e) => e.toJson()).toList(),
     "Client": client.toJson(),
     "ModifiedBy": modifiedBy,
@@ -111,8 +128,8 @@ class AppointmentDetail {
       "SalesTerritoryID": client.salesTerritory?.salesTerritoryID,
       "AppointmentDateTimeFrom": appointmentDateTimeFrom,
       "AppointmentDateTimeTo": appointmentDateTimeTo,
-      "Phone": client.phone,
-      "Email": client.email,
+      "Phone": phone,
+      "Email": email,
       "PurposeOther": purposeOther,
       "AppointmentAddress": {
         "Latitude": address.latitude,
@@ -135,6 +152,7 @@ class AppointmentDetail {
   AppointmentDetail copyWith({
     String? userId,
     String? clientId,
+    String? clientName,
     String? noted,
     String? assignedBy,
     String? appointmentTitle,
@@ -150,12 +168,16 @@ class AppointmentDetail {
     String? appointmentDateTimeFrom,
     String? appointmentDateTimeTo,
     Address? address,
+    String? phone,
+    String? email,
     List<Product>? products,
+    List<VisitActivity>? visitActivities,
     Client? client,
   }) {
     return AppointmentDetail(
       userId: userId ?? this.userId,
       clientId: clientId ?? this.clientId,
+      clientName: clientName ?? this.clientName,
       noted: noted ?? this.noted,
       assignedBy: assignedBy,
       appointmentTitle: appointmentTitle ?? this.appointmentTitle,
@@ -171,10 +193,25 @@ class AppointmentDetail {
       appointmentDateTimeFrom: appointmentDateTimeFrom ?? this.appointmentDateTimeFrom,
       appointmentDateTimeTo: appointmentDateTimeTo ?? this.appointmentDateTimeTo,
       address: address ?? this.address,
+      phone: phone ?? this.phone,
+      email: email ?? this.email,
       products: products ?? this.products,
+      visitActivities: visitActivities ?? this.visitActivities,
       client: client ?? this.client,
       purposeOther: purposeOther,
       modifiedBy: modifiedBy,
     );
+  }
+}
+
+extension TimeFormat on String {
+  String toHHmmss() {
+    final date = DateTime.tryParse(this);
+    if (date == null) return this;
+
+    print('date: $date');
+
+    final midnight = DateTime(date.year, date.month, date.day);
+    return DateFormat.Hms().format(midnight);
   }
 }

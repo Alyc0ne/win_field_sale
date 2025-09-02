@@ -310,7 +310,7 @@ class _AppointmentEditPageState extends ConsumerState<AppointmentEditPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         spacing: 24,
         children: [
-          AppText(label: '${client.firstName} ${client.lastName}', fontSize: 26),
+          AppText(label: appointmentDetail.clientName, fontSize: 26),
           Column(
             spacing: 16,
             children: [
@@ -386,8 +386,8 @@ class _AppointmentEditPageState extends ConsumerState<AppointmentEditPage> {
               ),
               Column(
                 children: [
-                  infoTile(label: 'mobile', value: AppText(label: client.phone), isHideIcon: true),
-                  infoTile(label: 'email', value: AppText(label: client.email), isHideIcon: true),
+                  infoTile(label: 'mobile', value: AppText(label: appointmentDetail.phone), isHideIcon: true),
+                  infoTile(label: 'email', value: AppText(label: appointmentDetail.email), isHideIcon: true),
                   infoTile(label: 'company', value: AppText(label: appointmentDetail.companyName), isHideIcon: true, isShowBorderBottom: true),
                 ],
               ),

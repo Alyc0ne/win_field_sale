@@ -66,6 +66,7 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
           return state.when(
             loading: () => Center(child: CircularProgressIndicator(color: colorPrimary)),
             error: (e, _) {
+              print('e: $e');
               return Center(child: AppText(label: "Appointment Not Found", textColor: Colors.red));
             },
             data: (detail) => buildContent(detail),
@@ -92,9 +93,10 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
               Column(
                 spacing: 6,
                 children: [
-                  AppText(label: '${client.firstName} ${client.lastName}', fontSize: 26),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  AppText(label: appointmentDetail.clientName, fontSize: 26),
+                  Wrap(
+                    runSpacing: 8,
+                    alignment: WrapAlignment.center,
                     spacing: 6,
                     children: [
                       AppointmentType(appointmentTypeName: appointmentDetail.appointmentTypeName),
@@ -126,13 +128,15 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
           Row(
             spacing: 16,
             children: [
-              Expanded(child: buildContentCard(title: 'time', descWidget: AppText(label: '${client.availableTimeStart} - ${client.availableTimeEnd}'))),
+              Expanded(
+                child: buildContentCard(title: 'time', descWidget: AppText(label: '${appointmentDetail.appointmentDateTimeFrom.toHHmmss()} - ${appointmentDetail.appointmentDateTimeTo.toHHmmss()}')),
+              ),
               Expanded(child: buildContentCard(title: 'territory', descWidget: AppText(label: salesTerritory?.salesTerritoryName ?? ''))),
             ],
           ),
           buildContentCard(title: 'address', descWidget: AppText(label: address.fullAddress, maxLines: 2), fullWidth: true),
-          buildContentCard(title: 'mobile', descWidget: AppText(label: client.phone), fullWidth: true),
-          buildContentCard(title: 'email', descWidget: AppText(label: client.email), fullWidth: true),
+          buildContentCard(title: 'mobile', descWidget: AppText(label: appointmentDetail.phone), fullWidth: true),
+          buildContentCard(title: 'email', descWidget: AppText(label: appointmentDetail.email), fullWidth: true),
           buildContentCard(title: 'company', descWidget: AppText(label: appointmentDetail.companyName), fullWidth: true),
           buildContentCard(
             title: 'products',

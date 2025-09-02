@@ -2,27 +2,27 @@ class VisitActivity {
   final String appointmentID;
   final String userID;
   final String clientID;
-  final String outcomeID;
-  final String checkInTime;
-  final String checkOutTime;
-  final double checkInLatitude;
-  final double checkInLongitude;
-  final double checkOutLatitude;
-  final double checkOutLongitude;
-  final String notes;
+  final String? outcomeID;
+  final String? checkInTime;
+  final String? checkOutTime;
+  final double? checkInLatitude;
+  final double? checkInLongitude;
+  final double? checkOutLatitude;
+  final double? checkOutLongitude;
+  final String? notes;
 
   VisitActivity({
     required this.appointmentID,
     required this.userID,
     required this.clientID,
-    required this.outcomeID,
-    required this.checkInTime,
-    required this.checkOutTime,
-    required this.checkInLatitude,
-    required this.checkInLongitude,
-    required this.checkOutLatitude,
-    required this.checkOutLongitude,
-    required this.notes,
+    this.outcomeID,
+    this.checkInTime,
+    this.checkOutTime,
+    this.checkInLatitude,
+    this.checkInLongitude,
+    this.checkOutLatitude,
+    this.checkOutLongitude,
+    this.notes,
   });
 
   factory VisitActivity.fromJson(Map<String, dynamic> json) {
@@ -58,4 +58,32 @@ class VisitActivity {
   }
 
   static List<VisitActivity> listFromJson(List<dynamic> jsonList) => jsonList.map((e) => VisitActivity.fromJson(e as Map<String, dynamic>)).toList();
+
+  VisitActivity copyWith({
+    String? appointmentID,
+    String? userID,
+    String? clientID,
+    String? outcomeID,
+    String? checkInTime,
+    String? checkOutTime,
+    double? checkInLatitude,
+    double? checkInLongitude,
+    double? checkOutLatitude,
+    double? checkOutLongitude,
+    String? notes,
+  }) {
+    return VisitActivity(
+      appointmentID: appointmentID ?? this.appointmentID,
+      userID: userID ?? this.userID,
+      clientID: clientID ?? this.clientID,
+      outcomeID: outcomeID ?? this.outcomeID,
+      checkInTime: checkInTime ?? this.checkInTime,
+      checkOutTime: checkOutTime ?? this.checkOutTime,
+      checkInLatitude: checkInLatitude ?? this.checkInLatitude,
+      checkInLongitude: checkInLongitude ?? this.checkInLongitude,
+      checkOutLatitude: checkOutLatitude ?? this.checkOutLatitude,
+      checkOutLongitude: checkOutLongitude ?? this.checkOutLongitude,
+      notes: notes ?? this.notes,
+    );
+  }
 }
