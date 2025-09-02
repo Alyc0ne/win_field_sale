@@ -209,9 +209,15 @@ extension TimeFormat on String {
     final date = DateTime.tryParse(this);
     if (date == null) return this;
 
-    print('date: $date');
-
     final midnight = DateTime(date.year, date.month, date.day);
     return DateFormat.Hms().format(midnight);
+  }
+
+  String dateTimetoHHmm() {
+    final date = DateTime.tryParse(this);
+    if (date == null) return this;
+
+    final midnight = DateTime(date.year, date.month, date.day);
+    return DateFormat.Hm().format(midnight);
   }
 }
