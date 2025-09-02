@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:win_field_sale/core/base_provider.dart';
 import 'package:win_field_sale/features/appointment/models/address.dart';
 import 'package:win_field_sale/features/appointment/models/appointment_detail.dart';
+import 'package:win_field_sale/features/appointment/models/client.dart';
 import 'package:win_field_sale/features/appointment/views/appointment_visit_page.dart';
 import 'package:win_field_sale/features/appointment/widgets/app_map.dart';
 import 'package:win_field_sale/features/appointment/widgets/app_text.dart';
@@ -129,7 +130,10 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
             spacing: 16,
             children: [
               Expanded(
-                child: buildContentCard(title: 'time', descWidget: AppText(label: '${appointmentDetail.appointmentDateTimeFrom.toHHmmss()} - ${appointmentDetail.appointmentDateTimeTo.toHHmmss()}')),
+                child: buildContentCard(
+                  title: 'time',
+                  descWidget: AppText(label: '${appointmentDetail.appointmentDateTimeFrom.dateTimetoHHmm()} - ${appointmentDetail.appointmentDateTimeTo.dateTimetoHHmm()}'),
+                ),
               ),
               Expanded(child: buildContentCard(title: 'territory', descWidget: AppText(label: salesTerritory?.salesTerritoryName ?? ''))),
             ],
