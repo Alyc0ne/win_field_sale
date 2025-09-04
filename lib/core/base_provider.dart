@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:win_field_sale/features/appointment/models/appointment_detail.dart';
 import 'package:win_field_sale/features/appointment/models/appointment_status.dart';
 import 'package:win_field_sale/features/appointment/models/appointment_type.dart';
+import 'package:win_field_sale/features/appointment/models/outcome.dart';
 import 'package:win_field_sale/features/appointment/models/product.dart';
 import 'package:win_field_sale/features/appointment/models/purpose.dart';
 import 'package:win_field_sale/features/appointment/models/territory.dart';
@@ -21,7 +22,7 @@ final appointmentEditProvider = StateNotifierProvider.autoDispose.family<Appoint
   return AppointmentEditViewModel(ref, id);
 });
 
-final appointmentVisitProvider = StateNotifierProvider.autoDispose.family<AppointmentVisitViewModel, AsyncValue<AppointmentDetail>, String>((ref, id) {
+final appointmentVisitProvider = StateNotifierProvider.autoDispose.family<AppointmentVisitViewModel, AppointmentVisitState, String>((ref, id) {
   return AppointmentVisitViewModel(ref, id);
 });
 
@@ -43,4 +44,8 @@ final purposesProvider = FutureProvider.autoDispose<List<Purpose>>((ref) async {
 
 final territoryProvider = FutureProvider.autoDispose<List<Territory>>((ref) async {
   return await ref.read(appointmentServiceProvider).fetchTerritories();
+});
+
+final outcomeProvider = FutureProvider.autoDispose<List<Outcome>>((ref) async {
+  return await ref.read(appointmentServiceProvider).fetchOutcomes();
 });

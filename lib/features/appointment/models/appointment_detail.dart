@@ -30,6 +30,8 @@ class AppointmentDetail {
   final List<VisitActivity> visitActivities;
   final Client client;
   final String modifiedBy;
+  final String createdBy;
+  final bool isActive;
 
   AppointmentDetail({
     required this.userId,
@@ -57,6 +59,8 @@ class AppointmentDetail {
     required this.visitActivities,
     required this.client,
     required this.modifiedBy,
+    required this.createdBy,
+    required this.isActive,
   });
 
   factory AppointmentDetail.fromJson(Map<String, dynamic> json) => AppointmentDetail(
@@ -82,9 +86,11 @@ class AppointmentDetail {
     phone: json["Phone"] ?? '',
     email: json["Email"] ?? '',
     products: (json["products"] as List).map((e) => Product.fromJson(e)).toList(),
-    visitActivities: (json["visit_activities"] as List? ?? []).map((e) => VisitActivity.fromJson(e)).toList(),
+    visitActivities: (json["VisitActivities"] as List? ?? []).map((e) => VisitActivity.fromJson(e)).toList(),
     client: Client.fromJson(json["Client"]),
     modifiedBy: json["ModifiedBy"],
+    createdBy: json["CreatedBy"],
+    isActive: json["IsActive"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -112,6 +118,8 @@ class AppointmentDetail {
     "products": products.map((e) => e.toJson()).toList(),
     "Client": client.toJson(),
     "ModifiedBy": modifiedBy,
+    "CreatedBy": createdBy,
+    "IsActive": isActive,
   };
 
   Map<String, dynamic> toJsonUpdate() {
@@ -173,6 +181,9 @@ class AppointmentDetail {
     List<Product>? products,
     List<VisitActivity>? visitActivities,
     Client? client,
+    String? modifiedBy,
+    String? createdBy,
+    bool? isActive,
   }) {
     return AppointmentDetail(
       userId: userId ?? this.userId,
@@ -199,7 +210,9 @@ class AppointmentDetail {
       visitActivities: visitActivities ?? this.visitActivities,
       client: client ?? this.client,
       purposeOther: purposeOther,
-      modifiedBy: modifiedBy,
+      modifiedBy: modifiedBy ?? this.modifiedBy,
+      createdBy: createdBy ?? this.createdBy,
+      isActive: isActive ?? this.isActive,
     );
   }
 }

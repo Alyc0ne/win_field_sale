@@ -4,6 +4,7 @@ import 'package:win_field_sale/features/appointment/models/appointment_detail.da
 import 'package:win_field_sale/features/appointment/models/appointment_status.dart';
 import 'package:win_field_sale/features/appointment/models/appointment_type.dart';
 import 'package:win_field_sale/features/appointment/models/company.dart';
+import 'package:win_field_sale/features/appointment/models/outcome.dart';
 import 'package:win_field_sale/features/appointment/models/product.dart';
 import 'package:win_field_sale/features/appointment/models/purpose.dart';
 import 'package:win_field_sale/features/appointment/models/territory.dart';
@@ -11,7 +12,7 @@ import 'package:win_field_sale/features/appointment/models/visit_activities.dart
 
 class AppointmentService {
   final apiClient = ApiClient('https://sfe-api.appnormalthink.com');
-  final token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzeXN0ZW1hZG1pbkBtYWlsLmNvbSIsImV4cCI6MTc1Njc3ODA2MX0.UNlX1DXQVfJtrHhxyg18VBjUtcUGR00H2582t7Xh5yM";
+  final token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzeXN0ZW1hZG1pbkBtYWlsLmNvbSIsImV4cCI6MTc1NzAyOTY1NX0.9_GjEOLlXxOgBSqqZKcSPVPpm_fI8C3_T6DN4w_8JnU";
 
   Future<List<Appointment>> fetchAppointments() async {
     final appointments = await apiClient.get(
@@ -112,6 +113,16 @@ class AppointmentService {
     return territories;
   }
 
+  Future<List<Outcome>> fetchOutcomes() async {
+    List<Outcome> outcomes = [
+      Outcome(outcomeID: "239513F7-C338-41D0-A73B-34E91C78348F", outcomeName: "Order Placed"),
+      Outcome(outcomeID: "2", outcomeName: "Quotation Sent"),
+      Outcome(outcomeID: "3", outcomeName: "Follow-up needed"),
+    ];
+
+    return outcomes;
+  }
+
   Future<List<Company>> fetchCompanies() async {
     final companies = await apiClient.get(
       path: "/company/?IsActive=true",
@@ -157,5 +168,63 @@ class AppointmentService {
     );
 
     return visitActivities;
+  }
+
+  Future<({bool ok, String activityId, String modifiedBy})> checkIn(VisitActivity visitActivity) async {
+    try {
+      return await apiClient.post(
+        path: "/appointment/visit/In",
+        body: visitActivity.toJson(),
+        decode: (json) {
+          final map = json as Map<String, dynamic>;
+          if ((map['status'] as String?)?.toLowerCase() != "success") return (ok: false, activityId: '', modifiedBy: '');
+
+          final visitActivity = (map['visit_activity'] as Map?)?.cast<String, dynamic>();
+          final activityID = visitActivity?['ActivityID']?.toString() ?? '';
+          final modifiedBy = visitActivity?['ModifiedBy']?.toString() ?? '';
+
+          return (ok: activityID.isNotEmpty, activityId: activityID, modifiedBy: modifiedBy);
+        },
+        headers: {"Authorization": "Bearer $token"},
+      );
+    } catch (e) {
+      print('checkIn catch: $e');
+      return (ok: false, activityId: '', modifiedBy: '');
+    }
+  }
+
+  Future<bool> uploadImage({required String activityId, required String modifiedBy, required String imgBase64}) async {
+    try {
+      return await apiClient.post(
+        path: "/appointment/upload-image",
+        body: {'ActivityID': activityId, 'ModifiedBy': modifiedBy, 'ImageData': imgBase64},
+        decode: (json) {
+          final map = json as Map<String, dynamic>;
+          print('uploadImage map: $map');
+          return (map['status'] as String?)?.toLowerCase() != "success";
+        },
+        headers: {"Authorization": "Bearer $token"},
+      );
+    } catch (e) {
+      print('uploadImage catch: $e');
+      return false;
+    }
+  }
+
+  Future<bool> checkOut(VisitActivity visitActivity) async {
+    try {
+      return await apiClient.post(
+        path: "/appointment/visit/out",
+        body: visitActivity.toJson(),
+        decode: (json) {
+          final map = json as Map<String, dynamic>;
+          return (map['status'] as String?)?.toLowerCase() != "success";
+        },
+        headers: {"Authorization": "Bearer $token"},
+      );
+    } catch (e) {
+      print('checkOut catch: $e');
+      return false;
+    }
   }
 }

@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:win_field_sale/core/base_provider.dart';
 import 'package:win_field_sale/features/appointment/models/address.dart';
 import 'package:win_field_sale/features/appointment/models/appointment_detail.dart';
-import 'package:win_field_sale/features/appointment/models/client.dart';
 import 'package:win_field_sale/features/appointment/views/appointment_visit_page.dart';
 import 'package:win_field_sale/features/appointment/widgets/app_map.dart';
 import 'package:win_field_sale/features/appointment/widgets/app_text.dart';
@@ -32,6 +31,13 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
 
   callEditPage() async {
     final result = await Navigator.of(context).pushNamed<bool>('/appointmentEdit', arguments: widget.appointmentID);
+    if (result == true && mounted) {
+      await ref.read(appointmentDetailProvider(widget.appointmentID).notifier).refresh();
+    }
+  }
+
+  callVisitPage() async {
+    final result = await Navigator.push(context, MaterialPageRoute<bool>(builder: (BuildContext context) => AppointmentVisitPage(appointmentID: widget.appointmentID)));
     if (result == true && mounted) {
       await ref.read(appointmentDetailProvider(widget.appointmentID).notifier).refresh();
     }
@@ -83,6 +89,10 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
     final salesTerritory = client.salesTerritory;
     final products = appointmentDetail.products;
 
+    final visitActivities = appointmentDetail.visitActivities;
+    final isCheckIn = visitActivities.isEmpty;
+    final visitTitle = isCheckIn ? 'check in' : 'check out';
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
       child: Column(
@@ -114,11 +124,7 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
                 children: [
                   buildActionCard(icon: Icons.person, title: 'clients', onTap: () => print('client page')),
                   buildActionCard(icon: Icons.location_pin, title: 'map', onTap: () => print('map page')),
-                  buildActionCard(
-                    icon: Icons.menu_book,
-                    title: 'check in',
-                    onTap: () => Navigator.push(context, MaterialPageRoute<void>(builder: (BuildContext context) => AppointmentVisitPage(appointmentID: appointmentDetail.appointmentId))),
-                  ),
+                  buildActionCard(icon: Icons.menu_book, title: visitTitle, onTap: () => callVisitPage()),
                   buildActionCard(icon: Icons.history, title: 'history', onTap: () => print('history page')),
                 ],
               ),
@@ -172,9 +178,9 @@ class _AppointmentDetailPageState extends ConsumerState<AppointmentDetailPage> {
         splashColor: const Color(0x33007AFF),
         highlightColor: Colors.transparent,
         child: Container(
-          width: 66,
+          width: 70,
           height: 58,
-          padding: EdgeInsets.all(8),
+          padding: EdgeInsets.all(6),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [Icon(icon, color: colorPrimary, size: 24), AppText(label: title, textColor: colorPrimary, fontSize: 12, lineHeight: 16)],
